@@ -8,7 +8,8 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
-COPY --from=builder /app/public ./public
+# Copiar la carpeta public desde el contexto de construcción (no desde el builder)
+COPY frontend/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
