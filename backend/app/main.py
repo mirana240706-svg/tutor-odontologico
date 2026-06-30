@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import create_engine, Column, String, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -7,7 +7,6 @@ from datetime import datetime
 import os
 from jose import jwt, JWTError
 
-# --- Configuración ---
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL o POSTGRES_URL no configurada")
@@ -16,7 +15,6 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# --- Modelos ---
 class UserStateDB(Base):
     __tablename__ = "user_states"
     user_id = Column(String, primary_key=True, index=True)
@@ -25,7 +23,6 @@ class UserStateDB(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# --- App FastAPI ---
 app = FastAPI(title="Tutor Odontológico", version="1.0.0")
 security = HTTPBearer()
 SECRET = os.getenv("NEXTAUTH_SECRET", "fallback_secret_cambiar")
@@ -48,7 +45,6 @@ async def health():
 
 @app.post("/api/start")
 async def start_tutorial(profile: dict, user_id: str = Depends(get_current_user)):
-    # Simplificado para pruebas
     return {"session_id": user_id, "message": f"Bienvenido {user_id}. Tutor iniciado."}
 
 @app.get("/api/dashboard")
